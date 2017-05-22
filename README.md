@@ -33,3 +33,8 @@ get /api/v1/scans/+scan_id
 post /api/v1/reports
 
 data = {"template_id":"11111111-1111-1111-1111-111111111111","source":{"list_type":"scans","id_list":[scan_id]}}
+
+
+详情参考
+
+http://0cx.cc/about_awvs11_api.jspx
