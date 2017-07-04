@@ -33,6 +33,16 @@ def startscan(url):
     # 先获取全部的任务.避免重复
     # 添加任务获取target_id
     # 开始扫描
+    '''
+    11111111-1111-1111-1111-111111111112    High Risk Vulnerabilities          
+    11111111-1111-1111-1111-111111111115    Weak Passwords        
+    11111111-1111-1111-1111-111111111117    Crawl Only         
+    11111111-1111-1111-1111-111111111116    Cross-site Scripting Vulnerabilities       
+    11111111-1111-1111-1111-111111111113    SQL Injection Vulnerabilities         
+    11111111-1111-1111-1111-111111111118    quick_profile_2 0   {"wvs": {"profile": "continuous_quick"}}            
+    11111111-1111-1111-1111-111111111114    quick_profile_1 0   {"wvs": {"profile": "continuous_full"}}         
+    11111111-1111-1111-1111-111111111111    Full Scan   1   {"wvs": {"profile": "Default"}}         
+    '''
     targets = getscan()
     if url in targets:
         return "repeat"
@@ -64,6 +74,12 @@ def getstatus(scan_id):
 
 def getreports(scan_id):
     # 获取scan_id的扫描报告
+    '''
+    11111111-1111-1111-1111-111111111111    Developer
+    21111111-1111-1111-1111-111111111111    XML
+    11111111-1111-1111-1111-111111111119    OWASP Top 10 2013 
+    11111111-1111-1111-1111-111111111112    Quick
+    '''
     data = {"template_id":"11111111-1111-1111-1111-111111111111","source":{"list_type":"scans","id_list":[scan_id]}}
     try:
         response = requests.post(tarurl+"/api/v1/reports",data=json.dumps(data),headers=headers,timeout=30,verify=False)
