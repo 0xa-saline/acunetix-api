@@ -1,6 +1,11 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
+import os
+import requests
 from xml.dom import minidom
+import requests.packages.urllib3
+requests.packages.urllib3.disable_warnings()
+
 
 filter = {
     "level_white_list": ["high", "medium","low","informational"],  # high,medium,low,informational四种级别.
@@ -12,6 +17,7 @@ filter = {
 }
 
 
+
 def details_parse_xml(file_name):
     bug_list = {}
     try:
@@ -21,7 +27,7 @@ def details_parse_xml(file_name):
         bug_list['time'] = root.getElementsByTagName('ScanTime')[0].firstChild.data.encode('utf-8')
         bug_list['url'] = []
         bug_list['bug'] = []
-        #遍历爬虫获取文件
+
         if Crawler_list:
             for crawl in Crawler_list:
                 spider = {}
@@ -31,7 +37,7 @@ def details_parse_xml(file_name):
                 spider['furl'] = fURL
                 bug_list['url'].append(spider)
 
-        #遍历漏洞信息
+        
         if ReportItem_list:
             for node in ReportItem_list:
                 level = node.getElementsByTagName("Severity")[0].firstChild.data.encode('utf-8')
@@ -49,11 +55,8 @@ def details_parse_xml(file_name):
                         details = ""
 
                     temp = {}
-                    #漏洞名称
                     temp['name'] = name
-                    #漏洞等级
                     temp['level'] = level.encode('utf-8')
-                    #请求包
                     temp['request'] = Request
                     temp['details'] = details
                     temp['path'] = node.getElementsByTagName("Affects")[0].firstChild.data.encode('utf-8')
@@ -65,8 +68,27 @@ def details_parse_xml(file_name):
 
     return bug_list
 
+def deal_url(scan_id,url):
+    filename = "/tmp/wvsreports/"+scan_id+".xml"
+    try:
+        resp = requests.get(url,timeout=120,verify=False)
+        content = resp.content
+        xmlf = file(filename,"w+")
+        xmlf.write(content)
+        xmlf.close()
+
+        results = details_parse_xml(filename)
+        #读出来，删除
+        os.remove(filename)
+        return results
+
+    except Exception as e:
+        print "Error in get report: %s " % str(e)
+
 if __name__ == '__main__':
-    results = details_parse_xml('XML1.xml')
+    target_id = "target_id"
+    reporturl = "https://127.0.0.1:3443/reports/download/hash.xml"
+    results = deal_url(target_id,reporturl)
+
     for result in results['bug']:
-        print result
-    
+        print result    
