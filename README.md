@@ -1,5 +1,7 @@
 # acunetix-api
-利用https://github.com/jenkinsci/acunetix-plugin/blob/master/src/main/java/com/acunetix/Engine.java里面所提供的api改写而来
+利用https://github.com/jenkinsci/acunetix-plugin/blob/master/src/main/java/com/acunetix/Engine.java
+
+里面所提供的api改写而来
 
 全局依赖于获取到的api-key
 
@@ -34,6 +36,12 @@ post /api/v1/reports
 
 data = {"template_id":"11111111-1111-1111-1111-111111111111","source":{"list_type":"scans","id_list":[scan_id]}}
 
+6.停止扫描
+
+POST /scans/" + scanId + "/abort
+
+7.删除扫描
+DELETE /api/v1/scans/+scan_id
 
 详情参考
 
