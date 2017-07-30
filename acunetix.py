@@ -72,6 +72,19 @@ def getstatus(scan_id):
         print(str(e))
         return
 
+def delete_scan(scan_id):
+    # 获取scan_id的扫描状况
+    try:
+        response = requests.delete(tarurl+"/api/v1/scans/"+str(scan_id),headers=headers,timeout=30,verify=False)
+        #如果是204 表示删除成功
+        if response.status_code == "204":
+            return True
+        else:
+            return False
+    except Exception as e:
+        print(str(e))
+        return
+    
 def getreports(scan_id):
     # 获取scan_id的扫描报告
     '''
@@ -89,6 +102,8 @@ def getreports(scan_id):
     except Exception as e:
         print(str(e))
         return
+    finally:
+        delete_scan(scan_id)
 
 def getscan():
     #获取全部的扫描状态
