@@ -85,6 +85,19 @@ def delete_scan(scan_id):
         print(str(e))
         return
 
+def delete_target(scan_id):
+    # 删除scan_id的扫描
+    try:
+        response = requests.delete(tarurl+"/api/v1/targets/"+str(scan_id),headers=headers,timeout=30,verify=False)
+        #如果是204 表示删除成功
+        if response.status_code == "204":
+            return True
+        else:
+            return False
+    except Exception as e:
+        print(str(e))
+        return    
+    
 def stop_scan(scan_id):
     # 停止scan_id的扫描
     try:
