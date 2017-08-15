@@ -131,6 +131,55 @@ def getreports(scan_id):
     finally:
         delete_scan(scan_id)
 
+def config(url):
+    target_id = addtask(url)
+    #获取全部的扫描状态
+    data = {
+            "excluded_paths":["manager","phpmyadmin","testphp"],
+            "user_agent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/59.0.3071.115 Safari/537.36",
+            "custom_headers":["Accept: */*","Referer:"+url,"Connection: Keep-alive"],
+            "custom_cookies":[{"url":url,"cookie":"UM_distinctid=15da1bb9287f05-022f43184eb5d5-30667808-fa000-15da1bb9288ba9; PHPSESSID=dj9vq5fso96hpbgkdd7ok9gc83"}],
+            "scan_speed":"moderate",#sequential/slow/moderate/fast more and more fast
+            "technologies":["PHP"],#ASP,ASP.NET,PHP,Perl,Java/J2EE,ColdFusion/Jrun,Python,Rails,FrontPage,Node.js
+            #代理
+            "proxy": {
+                "enabled":False,
+                "address":"127.0.0.1",
+                "protocol":"http",
+                "port":8080,
+                "username":"aaa",
+                "password":"bbb"
+            },
+            #无验证码登录
+            "login":{
+                "kind": "automatic",
+                "credentials": {
+                    "enabled": False, 
+                    "username": "test", 
+                    "password": "test"
+                }
+            },
+            #401认证
+            "authentication":{
+                "enabled":False,
+                "username":"test",
+                "password":"test"
+            }
+        }
+    try:
+        res = requests.patch(tarurl+"/api/v1/targets/"+str(target_id)+"/configuration",data=json.dumps(data),headers=headers,timeout=30*4,verify=False)
+        
+        data = {"target_id":target_id,"profile_id":"11111111-1111-1111-1111-111111111111","schedule": {"disable": False,"start_date":None,"time_sensitive": False}}
+        try:
+            response = requests.post(tarurl+"/api/v1/scans",data=json.dumps(data),headers=headers,timeout=30,verify=False)
+            result = json.loads(response.content)
+            return result['target_id']
+        except Exception as e:
+            print(str(e))
+            return
+    except Exception as e:
+        raise e
+        
 def getscan():
     #获取全部的扫描状态
     targets = []
@@ -145,4 +194,4 @@ def getscan():
         raise e
 
 if __name__ == '__main__':
-    print startscan('http://testhtml5.vulnweb.com/')
+    print config('http://testhtml5.vulnweb.com/')
