@@ -129,9 +129,9 @@ def getreports(scan_id):
 def generated_report(scan_id,target):
     data = {"template_id": "21111111-1111-1111-1111-111111111111","source": {"list_type": "scans", "id_list":[scan_id]}}
     try:
-        response = requests.post(tarurl + "/api/v1/reports", data=json.dumps(data), headers=define.api_header, verify=False)
+        response = requests.post(tarurl + "/api/v1/reports", data=json.dumps(data), headers=headers, verify=False)
         report_url = tarurl.strip('/') + response.headers['Location']
-        requests.get(str(report_url),headers=define.api_header, verify=False)
+        requests.get(str(report_url),headers=headers, verify=False)
         while True:
             report = get_report(response.headers['Location'])
             if not report:
@@ -141,7 +141,7 @@ def generated_report(scan_id,target):
         if(not os.path.exists("reports")):
             os.mkdir("reports")
             
-        report = requests.get(tarurl + report,headers=define.api_header, verify=False,timeout=120)
+        report = requests.get(tarurl + report,headers=headers, verify=False,timeout=120)
         
         filename = str(target.strip('/').split('://')[1]).replace('.','_').replace('/','-')
         file = "reports/" + filename + "%s.xml" % time.strftime("%Y-%m-%d-%H-%M", time.localtime(time.time()))
@@ -154,7 +154,7 @@ def generated_report(scan_id,target):
         delete_report(response.headers['Location'])
         
 def get_report(reportid):
-    res = requests.get(url=tarurl + reportid, timeout=10, verify=False, headers=define.api_header)
+    res = requests.get(url=tarurl + reportid, timeout=10, verify=False, headers=headers)
     try:
         report_url = res.json()['download'][0]
         return report_url
